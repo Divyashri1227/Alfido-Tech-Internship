@@ -1,48 +1,61 @@
-def calculator():
-    print("Welcome to the Basic Calculator!")
-    print("Choose an operation:")
-    print("1. Addition (+)")
-    print("2. Subtraction (-)")
-    print("3. Multiplication (*)")
-    print("4. Division (/)")
+import tkinter as tk
+from tkinter import messagebox
 
-    while True:
-        try:
-            # Taking user input for the operation
-            choice = input("\nEnter the number corresponding to the operation (1/2/3/4) or 'q' to quit: ").strip()
-            if choice.lower() == 'q':
-                print("Exiting the calculator. Goodbye!")
-                break
+# Function to perform the calculation
+def calculate():
+    try:
+        num1 = float(entry1.get())
+        num2 = float(entry2.get())
+        operation = operation_var.get()
 
-            if choice not in ('1', '2', '3', '4'):
-                print("Invalid choice. Please select a valid operation.")
-                continue
+        if operation == '+':
+            result = num1 + num2
+        elif operation == '-':
+            result = num1 - num2
+        elif operation == '*':
+            result = num1 * num2
+        elif operation == '/':
+            if num2 == 0:
+                raise ZeroDivisionError
+            result = num1 / num2
+        else:
+            result = "Invalid Operation"
 
-            # Taking input for the numbers
-            num1 = float(input("Enter the first number: "))
-            num2 = float(input("Enter the second number: "))
+        result_label.config(text=f"Result: {result}")
 
-            # Performing the operation
-            if choice == '1':
-                result = num1 + num2
-                operation = "+"
-            elif choice == '2':
-                result = num1 - num2
-                operation = "-"
-            elif choice == '3':
-                result = num1 * num2
-                operation = "*"
-            elif choice == '4':
-                if num2 == 0:
-                    print("Error: Division by zero is not allowed.")
-                    continue
-                result = num1 / num2
-                operation = "/"
+    except ValueError:
+        messagebox.showerror("Invalid Input", "Please enter valid numbers.")
+    except ZeroDivisionError:
+        messagebox.showerror("Math Error", "Cannot divide by zero.")
 
-            print(f"Result: {num1} {operation} {num2} = {result}")
+# Create the main window
+window = tk.Tk()
+window.title("Basic Calculator")
+window.geometry("300x250")
+window.resizable(False, False)
 
-        except ValueError:
-            print("Invalid input. Please enter numeric values.")
+# Input fields
+tk.Label(window, text="Enter first number:").pack(pady=5)
+entry1 = tk.Entry(window)
+entry1.pack()
 
-# Run the calculator
-calculator()
+tk.Label(window, text="Enter second number:").pack(pady=5)
+entry2 = tk.Entry(window)
+entry2.pack()
+
+# Operation selection
+tk.Label(window, text="Select operation:").pack(pady=5)
+operation_var = tk.StringVar(window)
+operation_var.set('+')  # default value
+operations_menu = tk.OptionMenu(window, operation_var, '+', '-', '*', '/')
+operations_menu.pack()
+
+# Calculate button
+tk.Button(window, text="Calculate", command=calculate).pack(pady=10)
+
+# Result label
+result_label = tk.Label(window, text="Result: ")
+result_label.pack(pady=10)
+
+# Start the GUI event loop
+window.mainloop()
